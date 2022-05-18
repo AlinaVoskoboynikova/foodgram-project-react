@@ -23,7 +23,8 @@ class UserSerializer(UserCreateSerializer):
         if request.user.is_anonymous:
             return False
         if Subscribe.objects.filter(
-                user=request.user, following__id=obj.id).exists():
+                user=request.user, following__id=obj.id
+        ).exists():
             return True
         else:
             return False

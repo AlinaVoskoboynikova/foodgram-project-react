@@ -29,9 +29,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели продуктов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = (permissions.AllowAny, )
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    search_fields = ['name', ]
+    search_fields = ('name', )
 
 
 class CreateUserView(UserViewSet):
@@ -45,7 +45,7 @@ class CreateUserView(UserViewSet):
 class SubscribeViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели подписок."""
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, )
 
     def get_queryset(self):
         return get_list_or_404(User, following__user=self.request.user)
@@ -69,10 +69,10 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели рецептов."""
     queryset = Recipe.objects.all()
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     pagination_class = CustomPagination
     filter_class = RecipeFilters
-    filter_backends = [DjangoFilterBackend, ]
+    filter_backends = (DjangoFilterBackend, )
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -86,7 +86,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 class ShoppingСartViewSet(viewsets.ModelViewSet):
     """Вьюсет модели корзины."""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = ShoppingСartSerializer
     queryset = ShoppingСart.objects.all()
     model = ShoppingСart
@@ -137,7 +137,7 @@ class ShoppingСartViewSet(viewsets.ModelViewSet):
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     """Вьюсет модели избранных рецептов."""
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated, )
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
     model = Favorite
