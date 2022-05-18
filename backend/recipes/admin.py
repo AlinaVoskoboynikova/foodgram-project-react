@@ -3,7 +3,7 @@ from django.contrib import admin
 from users.models import User
 
 from .models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                     ShoppingСart, Subscribe, Tag, TagRecipe)
+                     ShoppingCart, Subscribe, Tag, TagRecipe)
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -37,7 +37,7 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
 
-class ShoppingСartAdmin(admin.ModelAdmin):
+class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe', 'id')
     search_fields = ('user', )
     empty_value_display = '-пусто-'
@@ -71,7 +71,7 @@ class SubscribeAdmin(admin.ModelAdmin):
     list_filter = ('user',)
 
 
-admin.site.register(ShoppingСart, ShoppingСartAdmin)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Favorite, FavoriteAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Subscribe, SubscribeAdmin)

@@ -1,4 +1,5 @@
 from colorfield.fields import ColorField
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
@@ -92,7 +93,8 @@ class Recipe(models.Model):
     )
     cooking_time = models.IntegerField(
         verbose_name='Время приготовления',
-        help_text='Введите время приготовления'
+        help_text='Введите время приготовления',
+        validators=[MinValueValidator(1)]
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -127,7 +129,8 @@ class IngredientRecipe(models.Model):
     amount = models.IntegerField(
         default=1,
         verbose_name='Количество ингредиентов',
-        help_text='Введите количество ингредиентов'
+        help_text='Введите количество ингредиентов',
+        validators=[MinValueValidator(1)]
     )
 
     class Meta:
@@ -162,7 +165,7 @@ class TagRecipe(models.Model):
         return f'{self.tag} {self.recipe}'
 
 
-class ShoppingСart(models.Model):
+class ShoppingCart(models.Model):
     """Модель корзины пользователя."""
     user = models.ForeignKey(
         User,
@@ -183,6 +186,10 @@ class ShoppingСart(models.Model):
         ordering = ('-id',)
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_shoppingcart')
+        ]
 
     def __str__(self):
         return f'{self.user} {self.recipe}'
@@ -208,6 +215,10 @@ class Favorite(models.Model):
         ordering = ('-id',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique_favorite')
+        ]
 
     def __str__(self):
         return f'{self.recipe} {self.user}'

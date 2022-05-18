@@ -12,9 +12,9 @@ from api.filters import RecipeFilters
 from api.pagination import CustomPagination
 from api.serializers import (FavoriteSerializer, IngredientSerializer,
                              RecipeSerializer, RecipeSerializerPost,
-                             ShoppingСartSerializer, SubscriptionSerializer,
+                             ShoppingCartSerializer, SubscriptionSerializer,
                              TagSerializer, UserSerializer)
-from recipes.models import (Favorite, Ingredient, Recipe, ShoppingСart,
+from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
                             Subscribe, Tag)
 from users.models import User
 
@@ -80,16 +80,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return RecipeSerializer
-        else:
-            return RecipeSerializerPost
+        return RecipeSerializerPost
 
 
-class ShoppingСartViewSet(viewsets.ModelViewSet):
+class ShoppingCartViewSet(viewsets.ModelViewSet):
     """Вьюсет модели корзины."""
     permission_classes = (permissions.IsAuthenticated, )
-    serializer_class = ShoppingСartSerializer
-    queryset = ShoppingСart.objects.all()
-    model = ShoppingСart
+    serializer_class = ShoppingCartSerializer
+    queryset = ShoppingCart.objects.all()
+    model = ShoppingCart
 
     def create(self, request, *args, **kwargs):
         recipe_id = int(self.kwargs['recipes_id'])

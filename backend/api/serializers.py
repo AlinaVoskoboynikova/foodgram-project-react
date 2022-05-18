@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingСart, Subscribe, Tag, TagRecipe)
+                            ShoppingCart, Subscribe, Tag, TagRecipe)
 from users.models import User
 
 
@@ -22,12 +22,9 @@ class UserSerializer(UserCreateSerializer):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if Subscribe.objects.filter(
+        return Subscribe.objects.filter(
                 user=request.user, following__id=obj.id
-        ).exists():
-            return True
-        else:
-            return False
+        ).exists()
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -74,7 +71,7 @@ class FavoriteSerializer(serializers.Serializer):
     image = Base64ImageField(max_length=None, use_url=False,)
 
 
-class ShoppingСartSerializer(serializers.Serializer):
+class ShoppingCartSerializer(serializers.Serializer):
     """Создание сериализатора корзины."""
     id = serializers.IntegerField()
     name = serializers.CharField()
@@ -102,23 +99,19 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if Favorite.objects.filter(user=request.user,
-                                   recipe__id=obj.id).exists():
-            return True
-        else:
-            return False
+        return Favorite.objects.filter(
+            user=request.user,
+            recipe__id=obj.id
+        ).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if ShoppingСart.objects.filter(
+        return ShoppingCart.objects.filter(
             user=request.user,
             recipe__id=obj.id
-        ).exists():
-            return True
-        else:
-            return False
+        ).exists()
 
 
 class RecipeSerializerPost(serializers.ModelSerializer):
@@ -199,7 +192,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для списка подписок."""
     recipes = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(
+        source='recipes.count',
+        read_only=True
+    )
 
     class Meta:
         model = User
@@ -220,11 +216,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
-        if Subscribe.objects.filter(
-                user=request.user, following__id=obj.id).exists():
-            return True
-        else:
-            return False
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author__id=obj.id).count()
+        return Subscribe.objects.filter(
+                user=request.user,
+                following__id=obj.id
+        ).exists()
