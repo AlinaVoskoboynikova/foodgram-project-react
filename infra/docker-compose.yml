@@ -11,7 +11,7 @@ services:
     restart: always
 
   backend:
-    image: therealrustam/foodgram:latest
+    image: alinavsk/foodgram:latest
     restart: always
     depends_on:
       - db
@@ -22,7 +22,7 @@ services:
       - ./.env
 
   frontend:
-    image: therealrustam/foodgram_front:v18.04.2022
+    image: alinavsk/foodgram_front:v18.04.2022
     volumes:
       - result_build:/app/result_build/build/
     depends_on:
