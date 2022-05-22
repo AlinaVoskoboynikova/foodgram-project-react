@@ -3,12 +3,12 @@ version: '3.8'
 services:
 
   db:
-    env_file:
-      - .env
     image: postgres:13.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     restart: always
+    env_file:
+      - .env
 
   backend:
     image: alinavsk/foodgram:latest
@@ -40,6 +40,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
       - backend
+      - frontend
 
 volumes:
   result_build:
