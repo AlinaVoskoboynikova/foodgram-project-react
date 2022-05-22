@@ -13,7 +13,7 @@ SECRET_KEY = 'h45210g5tu&8h)&)*t_jvl(m=e#d&9)^iu$sqx6rfvc6lf-@in'
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '*', '84.201.167.183', ]
+ALLOWED_HOSTS = ['localhost', '*', '51.250.105.158', ]
 
 AUTH_USER_MODEL = 'users.User'
 
