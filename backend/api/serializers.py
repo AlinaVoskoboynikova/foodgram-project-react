@@ -22,7 +22,8 @@ class UserSerializer(UserCreateSerializer):
         if request.user.is_anonymous:
             return False
         return Subscribe.objects.filter(
-                user=request.user, following__id=obj.id
+            user=request.user,
+            following__id=obj.id
         ).exists()
 
 
@@ -165,8 +166,7 @@ class RecipeSerializerPost(serializers.ModelSerializer):
             text=text,
             cooking_time=cooking_time,
         )
-        recipe = self.add_tags_and_ingredients(tags_data, ingredients, recipe)
-        return recipe
+        return self.add_tags_and_ingredients(tags_data, ingredients, recipe)
 
     def update(self, instance, validated_data):
         tags = validated_data.pop('tags')
@@ -216,6 +216,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         if request.user.is_anonymous:
             return False
         return Subscribe.objects.filter(
-                user=request.user,
-                following__id=obj.id
+            user=request.user,
+            following__id=obj.id
         ).exists()
