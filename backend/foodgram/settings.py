@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '*', '84.201.167.183',]
+ALLOWED_HOSTS = ['localhost', '*', '84.201.167.183', ]
 
 AUTH_USER_MODEL = 'users.User'
 
