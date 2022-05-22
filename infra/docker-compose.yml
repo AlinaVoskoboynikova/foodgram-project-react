@@ -24,7 +24,7 @@ services:
   frontend:
     image: alinavsk/foodgram-frontend:latest
     volumes:
-      - result_build:/app/result_build/build/
+      - ./frontend/:/app/result_build/
     depends_on:
       - backend
 
