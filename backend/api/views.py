@@ -1,21 +1,20 @@
 from http import HTTPStatus
 
-from django.http import HttpResponse
-from django.shortcuts import get_list_or_404, get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
-from rest_framework import filters, permissions, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-
 from api.filters import RecipeFilters
 from api.pagination import CustomPagination
 from api.serializers import (FavoriteSerializer, IngredientSerializer,
                              RecipeSerializer, RecipeSerializerPost,
                              ShoppingCartSerializer, SubscriptionSerializer,
                              TagSerializer, UserSerializer)
+from django.http import HttpResponse
+from django.shortcuts import get_list_or_404, get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
                             Subscribe, Tag)
+from rest_framework import filters, permissions, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from users.models import User
 
 
