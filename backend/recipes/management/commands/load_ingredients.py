@@ -5,14 +5,13 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
-    """Класс для загрузки ингредиентов в БД."""
+    """Класс загрузки ингредиентов в БД"""
     def handle(self, *args, **options):
-        data_file = open('data/ingredients.json', encoding='utf-8').read()
-        ingredients_data = json.load(data_file)
-        for ingredient in ingredients_data:
-            name = ingredient['name']
-            measurement_unit = ingredient['measurement_unit']
-            Ingredient.objects.create(
-                name=name,
-                measurement_unit=measurement_unit
-            )
+        with open('data/ingredients.json', 'rb') as f:
+            data = json.load(f)
+            for i in data:
+                ingredient = Ingredient()
+                ingredient.name = i['name']
+                ingredient.measurement_unit = i['measurement_unit']
+                ingredient.save()
+                print(i['name'], i['measurement_unit'])
