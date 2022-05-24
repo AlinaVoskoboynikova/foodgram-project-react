@@ -64,8 +64,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE}}
           script: |
-            sudo docker pull alinavsk/foodgram-backend
-            sudo docker pull alinavsk/foodgram-frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
             sudo docker-compose rm frontend
