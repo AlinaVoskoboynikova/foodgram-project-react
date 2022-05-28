@@ -15,45 +15,26 @@ services:
     env_file:
       - ./.env
 
-  # backend:
-  #   build:
-  #     context: ../backend
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   volumes:
-  #     - static_value:/app/static/
-  #     - media_value:/app/media/
-  #   depends_on:
-  #     - db
-  #   env_file:
-  #     - ./.env
-
-  # frontend:
-  #   build:
-  #     context: ../frontend
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ../frontend/:/app/result_build/
-
-
   backend:
-    image: alinavsk/foodgram_back:latest
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
-    volumes:
-      - static_value:/app/backend/staticfiles/
-      - media_value:/app/backend/media/
     env_file:
       - ./.env
 
   frontend:
-    image: alinavsk/foodgram_front:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
-      - result_build:/app/result_build/build/
-    depends_on:
-      - backend
-    
+      - ../frontend/:/app/result_build/
+
   nginx:
     image: nginx:1.21.3
     ports:
