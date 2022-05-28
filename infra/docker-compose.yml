@@ -16,15 +16,13 @@ services:
       - ./.env
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: alinavsk/foodgram_back:latest
     restart: always
-    volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
     depends_on:
       - db
+    volumes:
+      - static_value:/app/backend/staticfiles/
+      - media_value:/app/backend/media/
     env_file:
       - ./.env
 
