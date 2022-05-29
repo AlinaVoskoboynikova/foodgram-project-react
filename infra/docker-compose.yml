@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 volumes:
   postgres_data:
@@ -34,7 +34,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-
+    
   nginx:
     image: nginx:1.21.3
     ports:
