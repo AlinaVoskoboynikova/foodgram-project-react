@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 volumes:
   postgres_data:
@@ -16,25 +16,27 @@ services:
       - ./.env
 
   backend:
-    image: alinavsk/foodgram_back:latest
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     restart: always
+    volumes:
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
-    volumes:
-      - static_value:/app/backend/staticfiles/
-      - media_value:/app/backend/media/
     env_file:
       - ./.env
 
   frontend:
-    image: alinavsk/foodgram_front:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-    depends_on:
-      - backend
 
   nginx:
-    image: nginx:1.21.3-alpine
+    image: nginx:1.21.3
     ports:
       - "80:80"
     volumes:
