@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from api.filters import RecipeFilters
+from api.filters import IngredientSearch, RecipeFilters
 from api.pagination import CustomPagination
 from api.serializers import (FavoriteSerializer, IngredientSerializer,
                              RecipeSerializer, RecipeSerializerPost,
@@ -17,7 +17,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework import filters, permissions, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from users.models import User
 
@@ -33,7 +33,7 @@ class IngredientViewSet(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (permissions.AllowAny, )
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_backends = (DjangoFilterBackend, IngredientSearch)
     search_fields = ('name', )
 
 
