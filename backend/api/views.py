@@ -6,20 +6,20 @@ from api.serializers import (FavoriteSerializer, IngredientSerializer,
                              RecipeSerializer, RecipeSerializerPost,
                              ShoppingCartSerializer, SubscriptionSerializer,
                              TagSerializer, UserSerializer)
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Subscribe, Tag)
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from recipes.models import (Favorite, Ingredient, IngredientRecipe,
-                            Recipe, ShoppingCart, Subscribe, Tag)
 from rest_framework import filters, permissions, viewsets
 from rest_framework.response import Response
 from users.models import User
-from django.db.models import Sum
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
