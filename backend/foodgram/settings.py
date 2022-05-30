@@ -7,11 +7,10 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECRET_KEY = 'h45210g5tu&8h)&)*t_jvl(m=e#d&9)^iu$sqx6rfvc6lf-@in'
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '51.250.105.158']
 

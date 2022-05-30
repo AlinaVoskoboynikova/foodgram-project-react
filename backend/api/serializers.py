@@ -123,12 +123,32 @@ class RecipeSerializerPost(serializers.ModelSerializer):
     ingredients = IngredientAmountRecipeSerializer(
         source='ingredientrecipes', many=True)
     image = Base64ImageField(max_length=None, use_url=False,)
+    is_in_shopping_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'author', 'name', 'image', 'text',
                   'ingredients', 'tags', 'cooking_time',
                   'is_in_shopping_cart', 'is_favorited')
+
+    def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        if request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(
+            user=request.user,
+            recipe__id=obj.id
+        ).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get('request')
+        if request.user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(
+            user=request.user,
+            recipe__id=obj.id
+        ).exists()
 
     def add_tags_and_ingredients(self, tags, ingredients, recipe):
         for tag_data in tags:
@@ -184,7 +204,7 @@ class RecipeSimpleSerializer(serializers.ModelSerializer):
     """Сериализатор для упрощенного отображения рецептов в подписках."""
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'cooking_time')
+        fields = ('id', 'name', 'cooking_time', 'image')
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

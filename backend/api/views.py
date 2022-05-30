@@ -10,12 +10,16 @@ from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Favorite, Ingredient, Recipe, ShoppingCart,
-                            Subscribe, Tag)
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from recipes.models import (Favorite, Ingredient, IngredientRecipe,
+                            Recipe, ShoppingCart, Subscribe, Tag)
 from rest_framework import filters, permissions, viewsets
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.models import User
+from django.db.models import Sum
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,6 +49,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели подписок."""
     serializer_class = SubscriptionSerializer
     permission_classes = (permissions.IsAuthenticated, )
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         return get_list_or_404(User, following__user=self.request.user)
@@ -85,6 +90,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class ShoppingCartViewSet(viewsets.ModelViewSet):
     """Вьюсет модели корзины."""
     permission_classes = (permissions.IsAuthenticated, )
+    pagination_class = CustomPagination
     serializer_class = ShoppingCartSerializer
     queryset = ShoppingCart.objects.all()
     model = ShoppingCart
@@ -104,38 +110,50 @@ class ShoppingCartViewSet(viewsets.ModelViewSet):
         object.delete()
         return Response(HTTPStatus.NO_CONTENT)
 
-    @action(detail=False)
-    def download_shopping_cart(self, request):
-        ingredients = request.user.shopping_cart.all().values_list(
-            'recipe__ingredients__name',
-            'recipe__ingredients__ingredientrecipes__amount',
-            'recipe__ingredients__measurement_unit')
-        shopping_list = {}
-        for ingredient in ingredients:
-            name = ingredient[0]
-            amount = ingredient[1]
-            measurement_unit = ingredient[2]
-            if name not in shopping_list:
-                shopping_list[name] = {
-                    'measurement_unit': measurement_unit,
-                    'amount': amount
-                }
-            else:
-                shopping_list[name]['amount'] += amount
-        buy = []
-        for item in shopping_list:
-            buy.append(f'{item} - {shopping_list[item]["amount"]} '
-                       f'{shopping_list[item]["measurement_unit"]} \n')
-        response = HttpResponse(buy, 'Content-Type: text/plain')
+    @staticmethod
+    def canvas_method(dictionary):
+        response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = (
-            'attachment; filename=shopping_cart.txt'
+            'attachment; filename = "shopping_cart.pdf"'
         )
+        begin_position_x, begin_position_y = 40, 650
+        sheet = canvas.Canvas(response, pagesize=A4)
+        pdfmetrics.registerFont(TTFont('FreeSans',
+                                       'data/FreeSans.ttf'))
+        sheet.setFont('FreeSans', 50)
+        sheet.setTitle('Список покупок')
+        sheet.drawString(begin_position_x,
+                         begin_position_y + 40, 'Список покупок: ')
+        sheet.setFont('FreeSans', 24)
+        for number, item in enumerate(dictionary, start=1):
+            if begin_position_y < 100:
+                begin_position_y = 700
+                sheet.showPage()
+                sheet.setFont('FreeSans', 24)
+            sheet.drawString(
+                begin_position_x,
+                begin_position_y,
+                f'{number}.  {item["ingredient__name"]} - '
+                f'{item["ingredient_total"]}'
+                f' {item["ingredient__measurement_unit"]}'
+            )
+            begin_position_y -= 30
+        sheet.showPage()
+        sheet.save()
         return response
+
+    def download_shopping_cart(self, request):
+        result = IngredientRecipe.objects.filter(
+            recipe__carts__user=request.user).values(
+            'ingredient__name', 'ingredient__measurement_unit').order_by(
+                'ingredient__name').annotate(ingredient_total=Sum('amount'))
+        return self.canvas_method(result)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     """Вьюсет модели избранных рецептов."""
     permission_classes = (permissions.IsAuthenticated, )
+    pagination_class = CustomPagination
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
     model = Favorite
